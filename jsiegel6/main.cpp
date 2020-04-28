@@ -12,7 +12,7 @@
 
 using namespace std;
 
-void directMap(vector<long> addresses, int size, long *hits, long *accesses){
+void directMap(vector<unsigned long> addresses, int size, long *hits, long *accesses){
     int total = size * KB;
     int numLines = total/LINE_SIZE;
     long *cache = new long[numLines];
@@ -20,7 +20,7 @@ void directMap(vector<long> addresses, int size, long *hits, long *accesses){
     long tag;
     *hits = 0;
     *accesses = 0;
-    for(int i = 0; i < addresses.size(); i++){
+    for(unsigned long i = 0; i < addresses.size(); i++){
         index = (addresses[i] >> 5) % numLines;
         tag = addresses[i]/total;
 
@@ -33,28 +33,27 @@ void directMap(vector<long> addresses, int size, long *hits, long *accesses){
     delete [] cache;
 }
 
-void setAssociative(vector<long> addresses, int ways, long *hits, long *accesses){
+void setAssociative(vector<unsigned long> addresses, int ways, long *hits, long *accesses){
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
     int sets = numLines/ways;
     int index;
     long tag;
     long **cache = new long*[sets];
-    map<int, int> LRU;
-    int least_recent;
-    int to_replace;
+    map<long, long> LRU;
+    long least_recent;
+    long to_replace;
     int way;
     *hits = 0;
     *accesses = 0;
-    for(int i = 0; i < numLines; i++){
+    for(long i = 0; i < numLines; i++){
         LRU[i] = -1;
     }
     for(int i = 0; i < sets; i++){
         cache[i] = new long[ways];
     }
-    *hits = 0;
-    *accesses = 0;
-    for(int i = 0; i < addresses.size(); i++){
+
+    for(unsigned long i = 0; i < addresses.size(); i++){
         index = (addresses[i] >> 5) % sets;
         tag = addresses[i]/(sets * LINE_SIZE);
         int j;
@@ -88,7 +87,7 @@ void setAssociative(vector<long> addresses, int ways, long *hits, long *accesses
     LRU.clear();
 }
 
-void fullyAssociativeLRU(vector<long> addresses, long *hits, long *accesses){
+void fullyAssociativeLRU(vector<unsigned long> addresses, long *hits, long *accesses){
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
 
@@ -96,14 +95,14 @@ void fullyAssociativeLRU(vector<long> addresses, long *hits, long *accesses){
     *hits = 0;
     *accesses = 0;
     long tag;
-    map<int, int> LRU;
-    int least_recent;
-    int to_replace;
+    map<long, long> LRU;
+    long least_recent;
+    long to_replace;
     //Initialized each initial most recent access to -1
-    for(int i = 0; i < numLines; i++){
+    for(long i = 0; i < numLines; i++){
         LRU[i] = -1;
     }
-    for(int i = 0; i < addresses.size(); i++){
+    for(unsigned long i = 0; i < addresses.size(); i++){
         *accesses = *accesses + 1;
         tag = addresses[i]/LINE_SIZE;
         int j;
@@ -133,25 +132,24 @@ void fullyAssociativeLRU(vector<long> addresses, long *hits, long *accesses){
     LRU.clear();
 }
 
-void fullyAssociativeHotCold(vector<long> addresses, long *hits, long *accesses){
+void fullyAssociativeHotCold(vector<unsigned long> addresses, long *hits, long *accesses){
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
 
-    int *hotCold = new int[numLines];
+    long *hotCold = new long[numLines];
     long *cache = new long[numLines];
     *hits = 0;
     *accesses = 0;
     long tag;
     int victim = 0;
 
-    for(int i = 0; i < numLines; i++){
+    for(long i = 0; i < numLines; i++){
         hotCold[i] = 0;
     }
-    for(int i = 0; i < addresses.size(); i++){
+    for(unsigned long i = 0; i < addresses.size(); i++){
         *accesses = *accesses + 1;
         tag = addresses[i]/LINE_SIZE;
         int j;
-        int victim = 0;
 
         for(j = 0; j < numLines; j++){
             if(tag == cache[j]){
@@ -196,28 +194,28 @@ void fullyAssociativeHotCold(vector<long> addresses, long *hits, long *accesses)
     delete [] cache;
 }
 
-void setAssociativeNoWrite(vector<long> addresses, vector<string> readWrite, int ways, long *hits, long *accesses){
+void setAssociativeNoWrite(vector<unsigned long> addresses, vector<string> readWrite, int ways, long *hits, long *accesses){
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
     int sets = numLines/ways;
     int index;
     long tag;
     long **cache = new long*[sets];
-    map<int, int> LRU;
-    int least_recent;
-    int to_replace;
+    map<long, long> LRU;
+    long least_recent;
+    long to_replace;
     int way;
     *hits = 0;
     *accesses = 0;
-    for(int i = 0; i < numLines; i++){
+    for(long i = 0; i < numLines; i++){
         LRU[i] = -1;
     }
-    for(int i = 0; i < sets; i++){
+    for(long i = 0; i < sets; i++){
         cache[i] = new long[ways];
     }
     *hits = 0;
     *accesses = 0;
-    for(int i = 0; i < addresses.size(); i++){
+    for(unsigned long i = 0; i < addresses.size(); i++){
         index = (addresses[i] >> 5) % sets;
         tag = addresses[i]/(sets * LINE_SIZE);
         int j;
@@ -251,7 +249,7 @@ void setAssociativeNoWrite(vector<long> addresses, vector<string> readWrite, int
     LRU.clear();
 }
 
-void prefetch(vector<long> addresses, int ways, long *hits, long *accesses){
+void prefetch(vector<unsigned long> addresses, int ways, long *hits, long *accesses){
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
     int sets = numLines/ways;
@@ -260,20 +258,20 @@ void prefetch(vector<long> addresses, int ways, long *hits, long *accesses){
     long tag;
     long pre_tag;
     long **cache = new long*[sets];
-    map<int, int> LRU;
-    int least_recent;
-    int to_replace;
+    map<long, long> LRU;
+    long least_recent;
+    long to_replace;
     int way;
     *hits = 0;
     *accesses = 0;
     int recent = 0;
-    for(int i = 0; i < numLines; i++){
+    for(long i = 0; i < numLines; i++){
         LRU[i] = -1;
     }
     for(int i = 0; i < sets; i++){
         cache[i] = new long[ways];
     }
-    for(int i = 0; i < addresses.size(); i++){
+    for(unsigned long i = 0; i < addresses.size(); i++){
         index = (addresses[i] >> 5) % sets;
         tag = addresses[i]/(sets * LINE_SIZE);
         pre_index = (index + 1) % sets;
@@ -335,7 +333,7 @@ void prefetch(vector<long> addresses, int ways, long *hits, long *accesses){
     LRU.clear();
 }
 
-void prefetchOnMiss(vector<long> addresses, int ways, long *hits, long *accesses){
+void prefetchOnMiss(vector<unsigned long> addresses, int ways, long *hits, long *accesses){
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
     int sets = numLines/ways;
@@ -344,20 +342,20 @@ void prefetchOnMiss(vector<long> addresses, int ways, long *hits, long *accesses
     long tag;
     long pre_tag;
     long **cache = new long*[sets];
-    map<int, int> LRU;
-    int least_recent;
-    int to_replace;
+    map<long, long> LRU;
+    long least_recent;
+    long to_replace;
     int way;
     *hits = 0;
     *accesses = 0;
     int recent = 0;
-    for(int i = 0; i < numLines; i++){
+    for(long i = 0; i < numLines; i++){
         LRU[i] = -1;
     }
     for(int i = 0; i < sets; i++){
         cache[i] = new long[ways];
     }
-    for(int i = 0; i < addresses.size(); i++){
+    for(unsigned long i = 0; i < addresses.size(); i++){
         index = (addresses[i] >> 5) % sets;
         tag = addresses[i]/(sets * LINE_SIZE);
         pre_index = (index + 1) % sets;
@@ -432,8 +430,8 @@ int main(int argc, char **argv){
         exit(1);
     }
 
-    vector<long> addresses;
-    long address;
+    vector<unsigned long> addresses;
+    unsigned long address;
     //readWrite vector used only for (4) (Set associative cache with no allocation on a write miss)
     vector<string> readWrite;
     string type;
