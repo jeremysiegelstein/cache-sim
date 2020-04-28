@@ -16,7 +16,7 @@ void directMap(vector<unsigned long> addresses, int size, long *hits, long *acce
     int total = size * KB;
     int numLines = total/LINE_SIZE;
     long *cache = new long[numLines];
-    int index;
+    long index;
     long tag;
     *hits = 0;
     *accesses = 0;
@@ -37,7 +37,7 @@ void setAssociative(vector<unsigned long> addresses, int ways, long *hits, long 
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
     int sets = numLines/ways;
-    int index;
+    long index;
     long tag;
     long **cache = new long*[sets];
     map<long, long> LRU;
@@ -198,7 +198,7 @@ void setAssociativeNoWrite(vector<unsigned long> addresses, vector<string> readW
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
     int sets = numLines/ways;
-    int index;
+    long index;
     long tag;
     long **cache = new long*[sets];
     map<long, long> LRU;
@@ -253,8 +253,8 @@ void prefetch(vector<unsigned long> addresses, int ways, long *hits, long *acces
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
     int sets = numLines/ways;
-    int index;
-    int pre_index;
+    long index;
+    long pre_index;
     long tag;
     long pre_tag;
     long **cache = new long*[sets];
@@ -337,8 +337,8 @@ void prefetchOnMiss(vector<unsigned long> addresses, int ways, long *hits, long 
     int total = 16 * KB;
     int numLines = total/LINE_SIZE;
     int sets = numLines/ways;
-    int index;
-    int pre_index;
+    long index;
+    long pre_index;
     long tag;
     long pre_tag;
     long **cache = new long*[sets];
