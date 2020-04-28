@@ -445,48 +445,53 @@ int main(int argc, char **argv){
         addresses.push_back(address);
         readWrite.push_back(type);
     }
+    infile.close();
+
+    ofstream outfile(out);
 
     long hits = 0;
     long accesses = 0;
 
     for(int i = 1; i < 32; i*=4){
         directMap(addresses, i, &hits, &accesses);
-        cout << hits << "," << accesses << "; ";
+        outfile << hits << "," << accesses << "; ";
     }
     directMap(addresses, 32, &hits, &accesses);
-    cout << hits << "," << accesses << ";" << endl;
+    outfile << hits << "," << accesses << ";" << endl;
 
     for(int i = 2; i < 16; i *= 2){
         setAssociative(addresses, i, &hits, &accesses);
-        cout << hits << "," << accesses << "; ";
+        outfile << hits << "," << accesses << "; ";
     }
     setAssociative(addresses, 16, &hits, &accesses);
-    cout << hits << "," << accesses << ";" << endl;
+    outfile << hits << "," << accesses << ";" << endl;
 
     fullyAssociativeLRU(addresses, &hits, &accesses);
-    cout << hits << "," << accesses << ";" << endl;
+    outfile << hits << "," << accesses << ";" << endl;
 
     fullyAssociativeHotCold(addresses, &hits, &accesses);
-    cout << hits << "," << accesses << ";" << endl;
+    outfile << hits << "," << accesses << ";" << endl;
 
     for(int i = 2; i < 16; i *= 2){
         setAssociativeNoWrite(addresses, readWrite, i, &hits, &accesses);
-        cout << hits << "," << accesses << "; ";
+        outfile << hits << "," << accesses << "; ";
     }
     setAssociativeNoWrite(addresses, readWrite, 16, &hits, &accesses);
-    cout << hits << "," << accesses << ";" << endl;
+    outfile << hits << "," << accesses << ";" << endl;
 
     for(int i = 2; i < 16; i *= 2){
         prefetch(addresses, i, &hits, &accesses);
-        cout << hits << "," << accesses << "; ";
+        outfile << hits << "," << accesses << "; ";
     }
     prefetch(addresses, 16, &hits, &accesses);
-    cout << hits << "," << accesses << ";" << endl;
+    outfile << hits << "," << accesses << ";" << endl;
 
     for(int i = 2; i < 16; i *= 2){
         prefetchOnMiss(addresses, i, &hits, &accesses);
-        cout << hits << "," << accesses << "; ";
+        outfile << hits << "," << accesses << "; ";
     }
     prefetchOnMiss(addresses, 16, &hits, &accesses);
-    cout << hits << "," << accesses << ";" << endl;
+    outfile << hits << "," << accesses << ";" << endl;
+
+    outfile.close();
 }
