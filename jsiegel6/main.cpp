@@ -5,6 +5,7 @@
 #include <vector>
 #include <map>
 #include <math.h>
+#include <climits>
 
 #define KB 1024
 #define LINE_SIZE 32
